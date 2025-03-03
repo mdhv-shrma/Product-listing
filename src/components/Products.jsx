@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
 import { Link } from 'react-router-dom';
+import { ThemeContext } from '../utilities/ThemeContext';
 
 const Products = () => {
+  const {theme, toggleTheme} = useContext(ThemeContext)
   const api = "https://dummyjson.com/products";
   
   const [data, setData] = useState([]);
@@ -51,11 +53,12 @@ const Products = () => {
           placeholder="Search products..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="px-4 py-2 border border-gray-400 rounded-l-md focus:outline-none"
+          className={`px-4 py-2 border border-gray-400 rounded-l-md focus:outline-none ${theme === "light" ? "bg-white text-black" : "bg-gray-900 text-white"}`}
         />
+        
         <button
           onClick={() => setSearchTerm("")}
-          className="px-4 py-2 bg-black text-white rounded-r-md hover:bg-gray-800"
+          className={`px-4 py-2   rounded-r-md ${theme === "light" ? "bg-gray-400 text-black" : "bg-gray-900 text-white"}`}
         >
           Clear
         </button>
