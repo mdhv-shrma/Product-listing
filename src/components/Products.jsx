@@ -1,10 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
-import { Link } from 'react-router-dom';
+
 import { ThemeContext } from '../utilities/ThemeContext';
+import { useSelector } from 'react-redux';
 
 const Products = () => {
-  const {theme, toggleTheme} = useContext(ThemeContext)
+  const cart = useSelector((state)=>state.cart);
+  console.log(cart);
+  const {theme} = useContext(ThemeContext)
   const api = "https://dummyjson.com/products";
   
   const [data, setData] = useState([]);
@@ -70,10 +73,8 @@ const Products = () => {
         <div className="flex flex-wrap gap-10 justify-center">
           {filteredData.length > 0 ? (
             filteredData.map((prod) => (
-              <div key={prod.id} className="h-96 w-[20%]">
-                <Link to={`/products/${prod.id}`}>
+              <div key={prod.id} className="h-96 w-[20%]">               
                   <ProductCard data={prod} />
-                </Link>
               </div>
             ))
           ) : (
