@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, removeFromCart } from "../store/actions/cartActions";
 
 const ProductDescription = () => {
   const { id } = useParams();
+  const dispatch = useDispatch();
+  const cart = useSelector((state) => state.cart)
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,6 +30,8 @@ const ProductDescription = () => {
   if (loading) return <p className="text-center text-gray-500">Loading...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
+  const cartItem = cart.find((item) => item.id === product.id);
+
   return (
     <div className="max-w-4xl mx-auto p-6 text-gray-900">
       <Link to="/products" className="text-blue-500 hover:underline">← Back to Products</Link>
@@ -41,9 +47,31 @@ const ProductDescription = () => {
             <p className="text-gray-700 mb-4">{product.description}</p>
             <p className="text-lg font-semibold text-green-600">${product.price}</p>
           </div>
-          <button className="mt-4 px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800">
-            Add to Cart
-          </button>
+
+          {cartItem ? (
+            <div className="flex items-center justify-center gap-4 mt-2">
+              <button
+                className="px-3 py-1 bg-gray-500 text-white rounded-lg"
+                onClick={() => dispatch(removeFromCart(product.id))} 
+              >
+                -
+              </button>
+              <span className="text-lg">{cartItem.quantity}</span>
+              <button
+                className="px-3 py-1 bg-gray-500 text-white rounded-lg"
+                onClick={() => dispatch(addToCart(product))} 
+              >
+                +
+              </button>
+            </div>
+          ) : (
+            <button
+              className="mt-4 px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800"
+              onClick={() => dispatch(addToCart(product))}
+            >
+              Add to Cart
+            </button>
+          )}
         </div>
       </div>
     </div>

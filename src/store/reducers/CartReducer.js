@@ -31,6 +31,13 @@ const cartReducer = (state=initialState,action) => {
                     .filter(item => item.quantity > 0),
             };
         }
+
+
+        case "SET_PRODUCTS":  
+            return {
+                ...state,
+                products: action.payload,
+            };
         
         default:
             return state

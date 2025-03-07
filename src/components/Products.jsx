@@ -1,13 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import ProductCard from './ProductCard';
-
 import { ThemeContext } from '../utilities/ThemeContext';
 import { useSelector } from 'react-redux';
 
 const Products = () => {
-  const cart = useSelector((state)=>state.cart);
+  const cart = useSelector((state) => state.cart);
   console.log(cart);
-  const {theme} = useContext(ThemeContext)
+  const { theme } = useContext(ThemeContext);
   const api = "https://dummyjson.com/products";
   
   const [data, setData] = useState([]);
@@ -46,7 +45,7 @@ const Products = () => {
     }, 500);
 
     return () => clearTimeout(debounce);
-  }, [searchTerm,data]);
+  }, [searchTerm, data]);
 
   return (
     <div className="p-6">
@@ -56,12 +55,16 @@ const Products = () => {
           placeholder="Search products..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className={`px-4 py-2 border border-gray-400 rounded-l-md focus:outline-none ${theme === "light" ? "bg-white text-black" : "bg-gray-900 text-white"}`}
+          className={`px-4 py-2 border border-gray-400 rounded-l-md focus:outline-none ${
+            theme === "light" ? "bg-white text-black" : "bg-gray-900 text-white"
+          }`}
         />
         
         <button
           onClick={() => setSearchTerm("")}
-          className={`px-4 py-2   rounded-r-md ${theme === "light" ? "bg-gray-400 text-black" : "bg-gray-900 text-white"}`}
+          className={`px-4 py-2 rounded-r-md ${
+            theme === "light" ? "bg-gray-400 text-black" : "bg-gray-900 text-white"
+          }`}
         >
           Clear
         </button>
@@ -70,12 +73,10 @@ const Products = () => {
       {loading ? (
         <p className="text-center text-white">Loading products...</p>
       ) : (
-        <div className="flex flex-wrap gap-10 justify-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
           {filteredData.length > 0 ? (
             filteredData.map((prod) => (
-              <div key={prod.id} className="h-96 w-[20%]">               
-                  <ProductCard data={prod} />
-              </div>
+              <ProductCard key={prod.id} data={prod} />
             ))
           ) : (
             <p className="text-center text-gray-400">No products found.</p>
