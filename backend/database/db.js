@@ -9,8 +9,8 @@ const pool = new Pool({
   port: process.env.DB_PORT || 5432,
 });
 
-const createTable = async () => {
-  const query = `
+const createTables = async () => {
+  const userTableQuery = `
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
       name VARCHAR(100) NOT NULL,
@@ -20,14 +20,26 @@ const createTable = async () => {
     );
   `;
 
+  const productTableQuery = `
+    CREATE TABLE IF NOT EXISTS products (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      price DECIMAL(10, 2) NOT NULL,
+      discount DECIMAL(5, 2) DEFAULT 0,
+      image_url TEXT,  -- Column for storing image URL
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `;
+
   try {
-    await pool.query(query);
-    console.log("Users table created (if not exists)");
+    await pool.query(userTableQuery);
+    await pool.query(productTableQuery);
+    console.log("Users and Products tables created (if not exists)");
   } catch (error) {
-    console.error("Error creating users table:", error.message);
+    console.error("Error creating tables:", error.message);
   }
 };
 
-createTable();
+createTables();
 
 module.exports = pool;
