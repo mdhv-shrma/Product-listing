@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useState } from 'react';
-import ProductCard from './ProductCard';
-import { ThemeContext } from '../utilities/ThemeContext';
-import { useSelector } from 'react-redux';
+import React, { useContext, useEffect, useState } from "react";
+import ProductCard from "./ProductCard";
+import { ThemeContext } from "../utilities/ThemeContext";
+import { useSelector } from "react-redux";
+import { getProducts } from "../api/products";
 
 const Products = () => {
   const cart = useSelector((state) => state.cart);
   console.log(cart);
   const { theme } = useContext(ThemeContext);
-  const api = "https://dummyjson.com/products";
-  
+
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -16,10 +16,9 @@ const Products = () => {
 
   async function fetchData() {
     try {
-      const res = await fetch(api);
-      const jsonRes = await res.json();
-      setData(jsonRes.products || []);
-      setFilteredData(jsonRes.products || []);
+      const products = await getProducts();
+      setData(products || []);
+      setFilteredData(products || []);
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
@@ -59,7 +58,7 @@ const Products = () => {
             theme === "light" ? "bg-white text-black" : "bg-gray-900 text-white"
           }`}
         />
-        
+
         <button
           onClick={() => setSearchTerm("")}
           className={`px-4 py-2 rounded-r-md ${
@@ -75,9 +74,7 @@ const Products = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
           {filteredData.length > 0 ? (
-            filteredData.map((prod) => (
-              <ProductCard key={prod.id} data={prod} />
-            ))
+            filteredData.map((prod) => <ProductCard key={prod.id} data={prod} />)
           ) : (
             <p className="text-center text-gray-400">No products found.</p>
           )}

@@ -2,20 +2,21 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { signUpUser } from "../api/auth"; // Import API function
+import { loginUser } from "../api/auth";
 
-function SignUp() {
-  const [name, setName] = useState("");
+function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSignUp = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const data = await signUpUser({ name, email, password });
-      toast.success(data.message, { position: "top-right", autoClose: 3000 });
-      setTimeout(() => navigate("/login"), 3000);
+      const data = await loginUser({ email, password });
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("isAuthenticated", "true");
+      toast.success("Login Successful", { position: "top-right", autoClose: 3000 });
+      setTimeout(() => navigate("/"), 3000);
     } catch (error) {
       toast.error(error, { position: "top-right", autoClose: 3000 });
     }
@@ -24,16 +25,8 @@ function SignUp() {
   return (
     <div className="flex items-center justify-center h-screen">
       <div className="bg-gray-800 text-white p-8 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-semibold text-center mb-6">Sign Up</h2>
-        <form onSubmit={handleSignUp} className="flex flex-col">
-          <input
-            type="text"
-            placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            className="p-3 mb-3 bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
-          />
+        <h2 className="text-2xl font-semibold text-center mb-6">Login</h2>
+        <form onSubmit={handleLogin} className="flex flex-col">
           <input
             type="email"
             placeholder="Email"
@@ -54,19 +47,13 @@ function SignUp() {
             type="submit"
             className="bg-white text-gray-900 font-semibold p-3 rounded-md hover:bg-gray-300 transition"
           >
-            Sign Up
+            Login
           </button>
         </form>
-        <p className="text-center text-gray-400 mt-4">
-          Already have an account?{" "}
-          <span className="text-white underline cursor-pointer" onClick={() => navigate("/login")}>
-            Login
-          </span>
-        </p>
       </div>
       <ToastContainer />
     </div>
   );
 }
 
-export default SignUp;
+export default Login;
