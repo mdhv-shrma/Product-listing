@@ -1,24 +1,49 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ThemeContext } from "../utilities/ThemeContext";
 import { ShoppingCart, User } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { fetchCartItems, clearCart } from "../store/actions/cartActions";
+import axios from "axios"; // Import axios for API calls
 
 const Navbar = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
-  const cart = useSelector((state) => state.cart);
-  const totalQuantity = cart.reduce((total, item) => total + item.quantity, 0);
+  
+  // Ensure cart is always an array (prevents "undefined" issues)
+  const cart = useSelector((state) => state.cart || []);
+  const totalQuantity = cart.reduce((total, item) => total + (item.quantity || 0), 0);
+  
   const navigate = useNavigate();
-
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dispatch = useDispatch();
+  const [username, setUsername] = useState("");
+
+  // Fetch username on component mount if authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      const userId = localStorage.getItem("userId");
+      axios
+        .get(`http://localhost:5000/api/auth/user/${userId}`)
+        .then((response) => {
+          setUsername(response.data.name); // Set the username from the response
+        })
+        .catch((error) => {
+          console.error("Error fetching user details:", error);
+          setUsername("User"); // Fallback to "User" in case of error
+        });
+      dispatch(fetchCartItems()); // Fetch cart items on mount
+    }
+  }, [isAuthenticated, dispatch]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userId");
     localStorage.setItem("isAuthenticated", "false");
     setDropdownOpen(false);
+    dispatch(clearCart()); // Clear the cart on logout
     toast.success("Logged out successfully!", { position: "top-center" });
     navigate("/");
   };
@@ -75,7 +100,7 @@ const Navbar = () => {
             <div className="relative">
               <button onClick={() => setDropdownOpen(!dropdownOpen)} className="bg-gray-700 text-white px-4 py-2 rounded-md shadow-md hover:bg-gray-600 flex items-center gap-2">
                 <User size={20} />
-                Profile
+                {`Welcome, ${username}`}
               </button>
 
               {dropdownOpen && (

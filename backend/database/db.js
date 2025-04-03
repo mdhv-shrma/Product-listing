@@ -26,15 +26,29 @@ const createTables = async () => {
       name VARCHAR(255) NOT NULL,
       price DECIMAL(10, 2) NOT NULL,
       discount DECIMAL(5, 2) DEFAULT 0,
-      image_url TEXT,  -- Column for storing image URL
+      image_url TEXT,
+      description TEXT, -- Added description field
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `;
+
+  const cartTableQuery = `
+    CREATE TABLE IF NOT EXISTS cart (
+      id SERIAL PRIMARY KEY,
+      user_id INT NOT NULL,
+      product_id INT NOT NULL,
+      quantity INT DEFAULT 1 CHECK (quantity > 0),
+      added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
     );
   `;
 
   try {
     await pool.query(userTableQuery);
     await pool.query(productTableQuery);
-    console.log("Users and Products tables created (if not exists)");
+    await pool.query(cartTableQuery);
+    console.log("Users, Products, and Cart tables created (if not exists)");
   } catch (error) {
     console.error("Error creating tables:", error.message);
   }

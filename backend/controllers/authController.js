@@ -37,7 +37,23 @@ exports.login = async (req, res) => {
 
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    res.json({ message: "Login successful", token });
+    res.json({ message: "Login successful", token, userId:user.id });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getUserInfo = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const userResult = await pool.query("SELECT id, name, email FROM users WHERE id = $1", [id]);
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(userResult.rows[0]);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

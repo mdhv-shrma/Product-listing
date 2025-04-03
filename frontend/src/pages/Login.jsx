@@ -13,14 +13,20 @@ function Login() {
     e.preventDefault();
     try {
       const data = await loginUser({ email, password });
+  
+      // Store authentication details in localStorage
       localStorage.setItem("token", data.token);
+      localStorage.setItem("userId", data.userId); // Store user ID
       localStorage.setItem("isAuthenticated", "true");
+  
       toast.success("Login Successful", { position: "top-right", autoClose: 3000 });
+  
       setTimeout(() => navigate("/"), 3000);
     } catch (error) {
-      toast.error(error, { position: "top-right", autoClose: 3000 });
+      toast.error(error.message || "Login failed", { position: "top-right", autoClose: 3000 });
     }
   };
+  
 
   return (
     <div className="flex items-center justify-center h-screen">

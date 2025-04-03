@@ -1,7 +1,14 @@
-import { createStore } from "redux";
+import { createStore, applyMiddleware } from "redux";
+import {thunk} from "redux-thunk";
+import { composeWithDevTools } from "redux-devtools-extension";
 import cartReducer from "./reducers/CartReducer";
 
 
-const cartStore = createStore(cartReducer);
+const Store = createStore(
+    cartReducer,
+    composeWithDevTools(applyMiddleware(thunk))
+    );
 
-export default cartStore;
+export default Store;
+
+

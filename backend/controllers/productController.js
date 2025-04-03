@@ -1,18 +1,18 @@
 const pool = require("../database/db");
 
 const addProduct = async (req, res) => {
-  const { name, price, discount, image_url } = req.body;
+  const { name, price, discount, image_url, description } = req.body; // Added description
 
-  if (!name || !price || !image_url) {
-    return res.status(400).json({ error: "All fields except discount are required!" });
+  if (!name || !price || !image_url || !description) { // Ensure description is required
+    return res.status(400).json({ error: "All fields are required!" });
   }
 
   try {
     const query = `
-      INSERT INTO products (name, price, discount, image_url) 
-      VALUES ($1, $2, $3, $4) RETURNING *;
+      INSERT INTO products (name, price, discount, image_url, description) 
+      VALUES ($1, $2, $3, $4, $5) RETURNING *;
     `;
-    const values = [name, price, discount || 0, image_url];
+    const values = [name, price, discount || 0, image_url, description];
     const newProduct = await pool.query(query, values);
 
     res.status(201).json({ message: "Product added successfully!", product: newProduct.rows[0] });
@@ -52,19 +52,19 @@ const deleteProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   const { id } = req.params;
-  const { name, price, discount, image_url } = req.body;
+  const { name, price, discount, image_url, description } = req.body; // Added description
 
-  if (!name || !price || !image_url) {
-    return res.status(400).json({ error: "All fields except discount are required!" });
+  if (!name || !price || !image_url || !description) { // Ensure description is required
+    return res.status(400).json({ error: "All fields are required!" });
   }
 
   try {
     const query = `
       UPDATE products 
-      SET name = $1, price = $2, discount = $3, image_url = $4, created_at = NOW() 
-      WHERE id = $5 RETURNING *;
+      SET name = $1, price = $2, discount = $3, image_url = $4, description = $5, created_at = NOW() 
+      WHERE id = $6 RETURNING *;
     `;
-    const values = [name, price, discount || 0, image_url, id];
+    const values = [name, price, discount || 0, image_url, description, id];
     const updatedProduct = await pool.query(query, values);
 
     if (updatedProduct.rowCount === 0) {

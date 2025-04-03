@@ -37,7 +37,7 @@ const Products = () => {
       } else {
         setFilteredData(
           data.filter((prod) =>
-            prod.title.toLowerCase().includes(searchTerm.toLowerCase())
+            prod.name?.toLowerCase().includes(searchTerm.toLowerCase()) // Fixed property name
           )
         );
       }
@@ -70,7 +70,7 @@ const Products = () => {
       </div>
 
       {loading ? (
-        <p className="text-center text-white">Loading products...</p>
+        <p className="text-center text-gray-700">Loading products...</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-center">
           {filteredData.length > 0 ? (

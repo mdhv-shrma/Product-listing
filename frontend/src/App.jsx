@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import './App.css'
 import Navbar from './components/Navbar'
@@ -9,25 +9,30 @@ import AboutUs from './pages/AboutUs';
 import ContactUs from './pages/ContactUs';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
+import Cart from './pages/Cart';
+import Profile from './pages/Profile';
+
 
 function App() {
 
   return (
     <>
-    <Router>
-      <Navbar/>
-      <Suspense fallback={<h2>Loading....</h2>}>
-        <Routes>
-          <Route path='/' element={<Home/>}/>
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-          <Route path='/aboutus' element={<AboutUs/>}/>
-          <Route path='/contactus' element={<ContactUs/>}/>
-          <Route path="/products" element={<Products/>}/>
-          <Route path="/products/:id" element={<ProductDescription/>}/>
-        </Routes>
-      </Suspense>
-    </Router>
+      <Router>
+        <Navbar/>
+        <Suspense fallback={<h2>Loading....</h2>}>
+          <Routes>
+            <Route path='/' element={<Home/>}/>
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<Login />} />
+            <Route path='/aboutus' element={<AboutUs/>}/>
+            <Route path='/contactus' element={<ContactUs/>}/>
+            <Route path="/products" element={<Products/>}/>
+            <Route path='/cart' element={<Cart/>}/>
+            <Route path='/profile' element={<Profile/>}/>
+            <Route path="/products/:id" element={<ProductDescription/>}/>
+          </Routes>
+        </Suspense>
+      </Router>
     </>
   )
 }
